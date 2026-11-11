@@ -194,3 +194,26 @@ class TestGrafo(unittest.TestCase):
         self.assertFalse((self.g_l5.eh_completo()))
         self.assertFalse((self.g_d.eh_completo()))
         self.assertFalse((self.g_d2.eh_completo()))
+
+    def test_dijkstra(self):
+        casos = [
+            ('A', 'B', (['A', 'C', 'B'], 3)),
+            ('A', 'C', (['A', 'C'], 2)),
+            ('A', 'D', (['A', 'C', 'B', 'D'], 8)),
+            ('A', 'E', (['A', 'C', 'B', 'D', 'E'], 10)),
+            ('A', 'F', (['A', 'C', 'B', 'D', 'E', 'F'], 13)),
+            ('A', 'A', (['A'], 0)),
+            ('A', 'G', None),
+            ('E', 'A', (['E', 'D', 'B', 'C', 'A'], 10))
+        ]
+
+        for origem, destino, esperado in casos:
+            with self.subTest(origem=origem, destino=destino):
+                self.assertEqual(
+                    self.g_dj.dijkstra(origem, destino),
+                    esperado
+                )
+
+    def test_dijkstra_vertice_inexistente(self):
+        with (self.assertRaises(VerticeInvalidoError)):
+            self.g_dj.dijkstra('A', 'Z')

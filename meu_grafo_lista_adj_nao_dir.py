@@ -169,13 +169,11 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
         visitados.add(V)
 
         def visita(u):
-            vizinhos = []
-
-            for aresta in self.arestas_sobre_vertice(u):
-                w = self.outra_ponta(aresta, u) # retorna o outro vértice
-                vizinhos.append((w, aresta))
-
-            for w, aresta in vizinhos:
+            arestas_incidentes = self.arestas_sobre_vertice(u)
+            for aresta in self.arestas:
+                if aresta not in arestas_incidentes:
+                    continue
+                w = self.outra_ponta(aresta, u)
                 if w not in visitados:
                     visitados.add(w)
                     arvore.adiciona_vertice(w)
