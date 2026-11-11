@@ -30,6 +30,7 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
 
                     if (v1 == u.rotulo and v2 == j.rotulo) or (v1 == j.rotulo and v2 == u.rotulo):
                         sao_adjacentes = True
+
                         break
 
                 # adicionar um par de set se não achar nenhuma aresta
@@ -221,3 +222,45 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
                     fila.append(w)
 
         return arvore
+
+    def dijkstra(self, u: str, v: str):
+        if not self.existe_rotulo_vertice(u) or not self.existe_rotulo_vertice(v):
+            raise VerticeInvalidoError(f"Vértice inválido {u} ou {v}")
+
+        if u == v:
+            return [u], 0
+
+        INF = float('inf')
+        beta = {x.rotulo: INF for x in self.vertices}
+        phi = {x.rotulo: 0 for x in self.vertices}
+        pi = {x.rotulo: None for x in self.vertices}
+
+        beta[u] = 0
+        phi[u] = 1
+        w = u
+
+        while w != v:
+            for a in self.arestas.values():
+                if a.v1.rotulo == w:
+                    r = a.v2.rotulo
+                elif a.v2.rotulo == w:
+                    r = a.v1.rotulo
+                else:
+                    continue
+
+                if phi[r] == 0 and beta[r] > beta[w] + a.peso:
+                    beta[r] = beta[w] + a.peso
+                    pi[r] = w
+
+            candidatos = [r for r in beta if phi[r] == 0 and beta[r] < INF]
+            if not candidatos:
+                return None
+
+            w = min(candidatos, key=lambda r: beta[r])
+            phi[w] = 1
+
+            caminho = [v]
+            while caminho[-1] != u:
+                caminho.append(pi[caminho[-1]])
+            caminho.reverse()
+            return caminho, beta[v]
