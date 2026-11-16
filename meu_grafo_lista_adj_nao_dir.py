@@ -261,4 +261,4 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
             while caminho[-1] != u:
                 caminho.append(pi[caminho[-1]])
             caminho.reverse()
-            return caminho, beta[v]
+            return caminho, beta[v] # teste
