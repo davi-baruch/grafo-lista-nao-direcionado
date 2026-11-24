@@ -54,6 +54,6 @@ def dijkstra(grafo, inicio, destino):
 
     return distancias[destino], menor_caminho
         
-resultado = dijkstra(grafo, "A", "F")
+resultado = dijkstra(grafo, "A", "E")
 
 print(resultado)

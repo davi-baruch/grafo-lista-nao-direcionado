@@ -251,14 +251,16 @@ class MeuGrafo(GrafoListaAdjacenciaNaoDirecionado):
                     pi[r] = w
 
             candidatos = [r for r in beta if phi[r] == 0 and beta[r] < INF]
+            
             if not candidatos:
                 return None
 
             w = min(candidatos, key=lambda r: beta[r])
             phi[w] = 1
 
-            caminho = [v]
-            while caminho[-1] != u:
-                caminho.append(pi[caminho[-1]])
-            caminho.reverse()
-            return caminho, beta[v]
+        caminho = [v]
+        while caminho[-1] != u:
+            caminho.append(pi[caminho[-1]])
+
+        caminho.reverse()
+        return caminho, beta[v]

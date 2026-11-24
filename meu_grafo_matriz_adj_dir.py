@@ -65,4 +65,4 @@ class MeuGrafo(GrafoMatrizAdjacenciaDirecionado):
         Provê a matriz de alcançabilidade de Warshall do grafo
         :return: Uma lista de listas que representa a matriz de alcançabilidade de Warshall associada ao grafo
         '''
-        pass
+        return 0
