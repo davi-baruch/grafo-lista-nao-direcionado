@@ -60,9 +60,35 @@ class MeuGrafo(GrafoMatrizAdjacenciaDirecionado):
         '''
         pass
 
+    def matriz_binaria(self):
+        matriz_binaria = []
+
+        for linha in self.matriz:
+            nova_linha = []
+
+            for celula in linha:
+                if celula:
+                    nova_linha.append(1)
+                else:
+                    nova_linha.append(0)
+
+            matriz_binaria.append(nova_linha)
+
+        return matriz_binaria
+
     def warshall(self):
         '''
         Provê a matriz de alcançabilidade de Warshall do grafo
         :return: Uma lista de listas que representa a matriz de alcançabilidade de Warshall associada ao grafo
         '''
-        return 0
+        copia_matriz = self.matriz_binaria()
+        n = len(copia_matriz)
+
+        for k in range(n):
+            for i in range(n):
+                if copia_matriz[i][k] == 1:
+                    for j in range(n):
+                        if copia_matriz[k][j] == 1:
+                            copia_matriz[i][j] = max(copia_matriz[i][j],  copia_matriz[k][j])
+
+        return copia_matriz

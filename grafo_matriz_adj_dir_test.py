@@ -210,3 +210,85 @@ class TestGrafo(unittest.TestCase):
         with self.assertRaises(VerticeInvalidoError):
             self.g_p.arestas_sobre_vertice('A')
         self.assertEqual(set(self.g_e.arestas_sobre_vertice('D')), {'5', '6', '7', '8'})
+
+
+def monta_grafo(rotulos, arestas):
+        g = MeuGrafo()
+
+        for r in rotulos:
+            g.adiciona_vertice(r)
+
+        for a in arestas:
+            g.adiciona_aresta(*a)
+
+        return g
+
+class TestWarshall(unittest.TestCase):
+
+    def setUp(self):
+        # G1: cadeia A -> B -> C -> D
+        self.g_cadeia = monta_grafo('ABCD', [('a1', 'A', 'B'), ('a2', 'B', 'C'), ('a3', 'C', 'D')])
+
+        # G2: ciclo A -> B -> C -> A, com saída C -> D
+        self.g_ciclo = monta_grafo('ABCD', [('a1', 'A', 'B'), ('a2', 'B', 'C'),
+                                            ('a3', 'C', 'A'), ('a4', 'C', 'D')])
+
+        # G3: laço em X, arestas paralelas X -> Y, pesos diferentes de 1, W isolado
+        self.g_lacos = monta_grafo('XYZW', [('l1', 'X', 'X'), ('a1', 'X', 'Y', 5),
+                                            ('p1', 'X', 'Y', 2), ('a2', 'Y', 'Z', 7)])
+
+        # G4: vértices sem nenhuma aresta
+        self.g_sem_arestas = monta_grafo('PQR', [])
+
+        # G5: a ordem dos vértices não coincide com a ordem dos caminhos
+        self.g_ordem = monta_grafo('ABCD', [('a1', 'A', 'C'), ('a2', 'C', 'B'), ('a3', 'B', 'D')])
+
+        # G6: grafo vazio
+        self.g_vazio = MeuGrafo()
+
+    def test_matriz_binaria(self):
+        self.assertEqual(self.g_lacos.matriz_binaria(), [[1, 1, 0, 0],
+                                                         [0, 0, 1, 0],
+                                                         [0, 0, 0, 0],
+                                                         [0, 0, 0, 0]])
+        self.assertEqual(self.g_sem_arestas.matriz_binaria(), [[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+        self.assertEqual(self.g_vazio.matriz_binaria(), [])
+
+    def test_warshall_cadeia(self):
+        self.assertEqual(self.g_cadeia.warshall(), [[0, 1, 1, 1],
+                                                    [0, 0, 1, 1],
+                                                    [0, 0, 0, 1],
+                                                    [0, 0, 0, 0]])
+
+    def test_warshall_ciclo(self):
+        self.assertEqual(self.g_ciclo.warshall(), [[1, 1, 1, 1],
+                                                   [1, 1, 1, 1],
+                                                   [1, 1, 1, 1],
+                                                   [0, 0, 0, 0]])
+
+    def test_warshall_lacos_paralelas_pesos(self):
+        self.assertEqual(self.g_lacos.warshall(), [[1, 1, 1, 0],
+                                                   [0, 0, 1, 0],
+                                                   [0, 0, 0, 0],
+                                                   [0, 0, 0, 0]])
+
+    def test_warshall_sem_arestas(self):
+        self.assertEqual(self.g_sem_arestas.warshall(), [[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+
+    def test_warshall_ordem_dos_lacos(self):
+        self.assertEqual(self.g_ordem.warshall(), [[0, 1, 1, 1],
+                                                   [0, 0, 0, 1],
+                                                   [0, 1, 0, 1],
+                                                   [0, 0, 0, 0]])
+
+    def test_warshall_grafo_vazio(self):
+        self.assertEqual(self.g_vazio.warshall(), [])
+
+    def test_warshall_nao_altera_o_grafo(self):
+        antes = str(self.g_ciclo)
+        self.g_ciclo.warshall()
+        self.assertEqual(str(self.g_ciclo), antes)
+
+
+if __name__ == '__main__':
+    unittest.main()
